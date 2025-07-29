@@ -1,0 +1,16 @@
+[
+  {
+    "name": "colombo_centre",
+    "lat": 6.9271,
+    "lon": 79.8612,
+    "radius_km": 0.5,
+    "scan_types": ["ble", "lora"]
+  },
+  {
+    "name": "galle_face",
+    "lat": 6.9329,
+    "lon": 79.8508,
+    "radius_km": 0.3,
+    "scan_types": ["ble"]
+  }
+]
