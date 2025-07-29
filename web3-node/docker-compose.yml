@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  grass:
+    build: ./grass
+    env_file: .env
+    restart: unless-stopped
+    devices:
+      - "/dev/fpga0:/dev/fpga0"  
+    ulimits:
+      nofile: 10000:50000       
+    volumes:
+      - type: tmpfs
+        target: /grass/tmp
+        tmpfs:
+          size: 100000000        
+    deploy:
+      resources:
+        limits:
+          memory: 800M          
+
+  teleport:
+    build: ./teleport
+    env_file: .env
+    restart: unless-stopped
+    cap_add:
+      - NET_RAW                   
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0" 
+      - "/dev/bus/usb:/dev/bus/usb" 
+    volumes:
+      - ./location_zones.json:/app/zones.json 
+
+  alephim:
+    build: ./alephim
+    env_file: .env
+    restart: unless-stopped
+    devices:
+      - "/dev/apex_0:/dev/apex_0" 
+    volumes:
+      - quantized-models:/models   
+    environment:
+      - TZ=Europe/Berlin           
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'              
+
+  watchdog:                        
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 --cleanup
+    restart: always
+
+volumes:
+  quantized-models:                
